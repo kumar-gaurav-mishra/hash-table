@@ -6,24 +6,33 @@ class HashTable {
     this.keyMap = new Array(size);
   }
   set(key, value) {
+    if (!key || !value) return undefined;
     let hash = this._hash(key);
-    if (hash > this.keyMap.length) throw { message: 'Hash Index out of bound' };
+    if (this.#keyArray.indexOf(key) < 0) {
+      this.#keyArray.push(key);
+    }
     if (!this.keyMap[hash]) {
       this.keyMap[hash] = [];
       this.keyMap[hash].push([key, value]);
+      if (this.#valueArray.indexOf(value) < 0) {
+        this.#valueArray.push(value);
+      }
     } else {
       let hashArr = this.keyMap[hash];
       for (let i = 0; i < hashArr.length; i++) {
         if (hashArr[i][0] === key) {
+          let valueIndex = this.#valueArray.indexOf(hashArr[i][1]);
+          if (valueIndex > -1) this.#valueArray[valueIndex] = value;
           hashArr[i][1] = value;
           this.keyMap[hash] = hashArr;
+          return this;
         }
-        return this;
       }
       this.keyMap[hash].push([key, value]);
+      if (this.#valueArray.indexOf(value) < 0) {
+        this.#valueArray.push(value);
+      }
     }
-    this.#valueArray.push(value);
-    this.#keyArray.push(key);
     return this;
   }
   get(key) {
